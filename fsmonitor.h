@@ -35,8 +35,7 @@ extern void tweak_fsmonitor(struct index_state *istate);
 
 /*
  * Run the configured fsmonitor integration script and clear the
- * CE_FSMONITOR_VALID bit for any files returned as dirty.  Also invalidate
- * any corresponding untracked cache directory structures. Optimized to only
+ * CE_FSMONITOR_VALID bit for any files returned as dirty. Optimized to only
  * run the first time it is called.
  */
 extern void refresh_fsmonitor(struct index_state *istate);
@@ -55,17 +54,14 @@ static inline void mark_fsmonitor_valid(struct cache_entry *ce)
 }
 
 /*
- * Clear the given cache entry's CE_FSMONITOR_VALID bit and invalidate
- * any corresponding untracked cache directory structures. This should
+ * Clear the given cache entry's CE_FSMONITOR_VALID bit. This should
  * be called any time git creates or modifies a file that should
- * trigger an lstat() or invalidate the untracked cache for the
- * corresponding directory
+ * trigger an lstat() for the corresponding directory
  */
 static inline void mark_fsmonitor_invalid(struct index_state *istate, struct cache_entry *ce)
 {
 	if (core_fsmonitor) {
 		ce->ce_flags &= ~CE_FSMONITOR_VALID;
-		untracked_cache_invalidate_path(istate, ce->name, 1);
 		trace_printf_key(&trace_fsmonitor, "mark_fsmonitor_invalid '%s'", ce->name);
 	}
 }

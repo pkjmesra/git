@@ -19,7 +19,6 @@
 #include "varint.h"
 #include "ewah/ewok.h"
 #include "fsexcludes.h"
-#include "fsmonitor.h"
 
 /*
  * Tells read_directory_recursive how a file or directory should be treated.
@@ -1827,20 +1826,14 @@ static int valid_cached_dir(struct dir_struct *dir,
 	if (!untracked)
 		return 0;
 
-	/*
-	 * With fsmonitor, we can trust the untracked cache's valid field.
-	 */
-	refresh_fsmonitor(istate);
-	if (!(dir->untracked->use_fsmonitor && untracked->valid)) {
-		if (lstat(path->len ? path->buf : ".", &st)) {
-			memset(&untracked->stat_data, 0, sizeof(untracked->stat_data));
-			return 0;
-		}
-		if (!untracked->valid ||
-			match_stat_data_racy(istate, &untracked->stat_data, &st)) {
-			fill_stat_data(&untracked->stat_data, &st);
-			return 0;
-		}
+	if (stat(path->len ? path->buf : ".", &st)) {
+		memset(&untracked->stat_data, 0, sizeof(untracked->stat_data));
+		return 0;
+	}
+	if (!untracked->valid ||
+	    match_stat_data_racy(istate, &untracked->stat_data, &st)) {
+		fill_stat_data(&untracked->stat_data, &st);
+		return 0;
 	}
 
 	if (untracked->check_only != !!check_only)
