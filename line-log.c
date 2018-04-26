@@ -599,11 +599,15 @@ parse_lines(struct commit *commit, const char *prefix, struct string_list *args)
 				    lines, anchor, &begin, &end,
 				    full_name))
 			die("malformed -L argument '%s'", range_part);
-		if (lines < end || ((lines || begin) && lines < begin))
-			die("file %s has only %lu lines", name_part, lines);
+		if (!begin && end < 0)
+			die("-L invalid empty range");
+		if ((!lines && (begin || end)) || lines < begin)
+			die(Q_("file %s has only %lu line",
+				   "file %s has only %lu lines",
+				   lines), name_part, lines);
 		if (begin < 1)
 			begin = 1;
-		if (end < 1)
+		if (end < 1 || lines < end)
 			end = lines;
 		begin--;
 		line_log_data_insert(&ranges, full_name, begin, end);
