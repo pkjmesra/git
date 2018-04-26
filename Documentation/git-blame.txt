@@ -152,6 +152,16 @@ Also you can use a regular expression to specify the line range:
 
 which limits the annotation to the body of the `hello` subroutine.
 
+A range that begins or ends outside the bounds of the file will
+blame the relevant lines. For example:
+
+	git blame -L 10,-20 foo
+	git blame -L 10,+20 foo
+
+will respectively blame the first 10 and last 11 lines of a
+20 line file. However, blaming a line range that is entirely
+outside the bounds of the file will fail.
+
 When you are not interested in changes older than version
 v2.6.18, or changes older than 3 weeks, you can use revision
 range specifiers  similar to 'git rev-list':
