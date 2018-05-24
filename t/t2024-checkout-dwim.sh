@@ -68,6 +68,16 @@ test_expect_success 'checkout of branch from multiple remotes fails #1' '
 	test_branch master
 '
 
+test_expect_success 'checkout of branch from multiple remotes succeeds with checkout.implicitRemote #1' '
+	git checkout -B master &&
+	test_might_fail git branch -D foo &&
+
+	git -c checkout.implicitRemote=repo_a checkout foo &&
+	test_branch foo &&
+	test_cmp_rev remotes/repo_a/foo HEAD &&
+	test_branch_upstream foo repo_a foo
+'
+
 test_expect_success 'checkout of branch from a single remote succeeds #1' '
 	git checkout -B master &&
 	test_might_fail git branch -D bar &&

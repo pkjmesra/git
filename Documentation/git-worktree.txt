@@ -60,6 +60,11 @@ with a matching name, treat as equivalent to:
 $ git worktree add --track -b <branch> <path> <remote>/<branch>
 ------------
 +
+The `checkout.implicitRemote` setting can be used to to designate a
+preferred `<remote>` this rule should be applied to, even if the
+`<branch>` isn't unique across all remotes. See
+`checkout.implicitRemote` in linkgit:git-config[1].
++
 If `<commit-ish>` is omitted and neither `-b` nor `-B` nor `--detach` used,
 then, as a convenience, the new worktree is associated with a branch
 (call it `<branch>`) named after `$(basename <path>)`.  If `<branch>`
